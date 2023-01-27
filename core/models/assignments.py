@@ -1,4 +1,6 @@
 import enum
+
+from marshmallow import ValidationError
 from core import db
 from core.apis.decorators import Principal
 from core.libs import helpers, assertions
@@ -75,17 +77,14 @@ class Assignment(db.Model):
 
     @classmethod
     def grade_assignment(cls, _id, grade, principal: Principal):
-        
         assignment = Assignment.get_by_id(_id)
-        for x in GradeEnum:
-            print(x, file=sys.stderr)
 
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.state == AssignmentStateEnum.SUBMITTED, 'only a submitted assignment can be graded')
         assertions.assert_valid(assignment.teacher_id == principal.teacher_id, 'This assignment belongs to some other teacher')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be graded')
-        # assertions.assert_valid(grade in GradeEnum._value2member_map_ , 'Grade not possible')
-
+        if grade not in GradeEnum._value2member_map_:
+            raise ValidationError('Grade not found')
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
