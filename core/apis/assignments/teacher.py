@@ -11,8 +11,25 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @teacher_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False) 
 @decorators.auth_principal 
 def list_assignments(p): 
-    """Returns list of assignments""" 
-    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id) 
+    """Returns list of assignments of the teacher""" 
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True) 
     return APIResponse.respond(data=teachers_assignments_dump) 
     
+
+import sys
+from flask import request
+@teacher_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False) 
+@decorators.accept_payload
+@decorators.auth_principal 
+def grade_assignments(p, incoming_payload): 
+    """Grade assignments""" 
+    grade_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
+    graded_assignment = Assignment.grade_assignment(
+        _id = grade_assignment_payload.id,
+        grade = grade_assignment_payload.grade,
+        principal=p
+    )
+    db.session.commit()
+    graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
+    return APIResponse.respond(data=graded_assignment_dump)

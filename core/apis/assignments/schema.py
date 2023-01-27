@@ -30,7 +30,8 @@ class AssignmentSubmitSchema(Schema):
         unknown = EXCLUDE
 
     id = fields.Integer(required=True, allow_none=False)
-    teacher_id = fields.Integer(required=True, allow_none=False)
+    teacher_id = fields.Integer(allow_none=True)
+    grade = fields.String(allow_none=True)
 
     @post_load
     def initiate_class(self, data_dict, many, partial):
