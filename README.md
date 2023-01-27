@@ -54,3 +54,8 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+### Results
+Test Results:
+![alt text](https://github.com/mdrazak2001/fyle-interview-intern-backend/blob/main/results/Test_Results.png)
+Test Coverage Report:
+![alt text](https://github.com/mdrazak2001/fyle-interview-intern-backend/blob/main/results/Test_Coverage_Results.png)
